@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Disaster Response Assistant - Offline First Emergency Response System">
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Disaster Response AI</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🚨</span>
+                    <h1>Disaster Response AI</h1>
+                </div>
+                <div class="status-bar">
+                    <span id="onlineStatus" class="status-indicator online"></span>
+                    <span id="statusText">Online</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <div class="input-methods">
+                    <button class="input-btn active" data-method="text" onclick="switchInputMethod('text')">
+                        <span class="icon">⌨️</span>
+                        <span>Text</span>
+                    </button>
+                    <button class="input-btn" data-method="voice" onclick="switchInputMethod('voice')">
+                        <span class="icon">🎤</span>
+                        <span>Voice</span>
+                    </button>
+                    <button class="input-btn" data-method="image" onclick="switchInputMethod('image')">
+                        <span class="icon">📷</span>
+                        <span>Image</span>
+                    </button>
+                </div>
+
+                <div class="input-area" id="textInputArea">
+                    <textarea id="userInput" placeholder="Describe your emergency situation..." rows="4"></textarea>
+                    <button class="analyze-btn" onclick="analyzeInput()">
+                        <span>Analyze Situation</span>
+                        <span class="icon">🔍</span>
+                    </button>
+                </div>
+
+                <div class="input-area hidden" id="voiceInputArea">
+                    <div class="voice-recording">
+                        <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceRecording()">
+                            <span class="icon">🎤</span>
+                            <span id="voiceBtnText">Start Recording</span>
+                        </button>
+                        <div id="voiceTranscript" class="voice-transcript"></div>
+                    </div>
+                </div>
+
+                <div class="input-area hidden" id="imageInputArea">
+                    <div class="image-upload">
+                        <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)" hidden>
+                        <div class="image-preview" id="imagePreview">
+                            <button class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                                <span class="icon">📷</span>
+                                <span>Upload Image</span>
+                            </button>
+                        </div>
+                        <button class="analyze-btn" onclick="analyzeImage()" id="analyzeImageBtn" disabled>
+                            <span>Analyze Image</span>
+                            <span class="icon">🔍</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="severity-indicator" id="severityIndicator">
+                    <div class="severity-bar">
+                        <div class="severity-level" id="severityLevel"></div>
+                    </div>
+                    <div class="severity-text">
+                        <span id="severityLabel">Analyzing...</span>
+                        <span id="severityScore"></span>
+                    </div>
+                </div>
+
+                <div class="analysis-results" id="analysisResults">
+                    <div class="result-card">
+                        <h3>🏷️ Detected Situation</h3>
+                        <p id="detectedSituation">Waiting for analysis...</p>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>⚠️ Immediate Risks</h3>
+                        <ul id="immediateRisks" class="risk-list"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>✅ Recommended Actions</h3>
+                        <div id="recommendedActions" class="actions-list"></div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>🩹 First Aid Instructions</h3>
+                        <div id="firstAidInstructions" class="instructions-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h2>🚨 Emergency Protocols</h2>
+                <div class="protocol-grid">
+                    <button class="protocol-btn fire" onclick="showProtocol('fire')">
+                        <span class="icon">🔥</span>
+                        <span>Fire Emergency</span>
+                    </button>
+                    <button class="protocol-btn flood" onclick="showProtocol('flood')">
+                        <span class="icon">🌊</span>
+                        <span>Flood Emergency</span>
+                    </button>
+                    <button class="protocol-btn earthquake" onclick="showProtocol('earthquake')">
+                        <span class="icon">🌍</span>
+                        <span>Earthquake</span>
+                    </button>
+                    <button class="protocol-btn medical" onclick="showProtocol('medical')">
+                        <span class="icon">🏥</span>
+                        <span>Medical Emergency</span>
+                    </button>
+                    <button class="protocol-btn evacuation" onclick="showProtocol('evacuation')">
+                        <span class="icon">🚪</span>
+                        <span>Evacuation Guide</span>
+                    </button>
+                    <button class="protocol-btn shelter" onclick="showProtocol('shelter')">
+                        <span class="icon">🏠</span>
+                        <span>Shelter in Place</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="resource-center">
+                <h2>📚 Resource Center</h2>
+                <div class="resource-tabs">
+                    <button class="resource-tab active" data-resource="emergency-contacts" onclick="switchResource('emergency-contacts')">
+                        Emergency Contacts
+                    </button>
+                    <button class="resource-tab" data-resource="first-aid" onclick="switchResource('first-aid')">
+                        First Aid Guide
+                    </button>
+                    <button class="resource-tab" data-resource="survival" onclick="switchResource('survival')">
+                        Survival Tips
+                    </button>
+                    <button class="resource-tab" data-resource="checklist" onclick="switchResource('checklist')">
+                        Emergency Checklist
+                    </button>
+                </div>
+                <div class="resource-content" id="resourceContent">
+                </div>
+            </div>
+
+            <div class="alert-section" id="alertSection">
+                <h2>🚨 Active Alerts</h2>
+                <div id="alertList" class="alert-list"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>AI Disaster Response Assistant - Offline First Edition</p>
+            <p class="version">Version 1.0 | Works Offline</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="protocolModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="protocolContent"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
